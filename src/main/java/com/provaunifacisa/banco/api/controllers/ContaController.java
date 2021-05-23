@@ -1,4 +1,7 @@
 package com.provaunifacisa.banco.api.controllers;
+import java.text.ParseException;
+import java.time.LocalDate;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +21,8 @@ import com.provaunifacisa.banco.api.models.Conta;
 import com.provaunifacisa.banco.api.models.Transacao;
 import com.provaunifacisa.banco.api.services.ContaService;
 
-import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "Controlador de Contas Bancárias")
@@ -30,7 +33,7 @@ public class ContaController {
 	private ContaService contaService;
 	
 	@ApiOperation(value = "Lista todas as contas existente no banco.") 
-	@GetMapping("/contas")
+	@GetMapping("/listarContas")
 	@ResponseBody
 	public ResponseEntity<List<Conta>> listaContas(){
 		return new ResponseEntity<>(contaService.listarContas(), HttpStatus.OK);
@@ -79,7 +82,7 @@ public class ContaController {
 		return new ResponseEntity<>(conta, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Retorna o saldo da conta do usuario.") 
+	@ApiOperation(value = "Retorna o saldo da conta de um usuario.") 
 	@GetMapping("/{id}/saldo")
 	@ResponseBody
 	public ResponseEntity<String> consultaSaldoConta(@PathVariable(value="id") long id){
@@ -103,11 +106,11 @@ public class ContaController {
 		contaService.atualizaConta(conta);
 		
 		return ResponseEntity.status(HttpStatus.OK)
-		        .body("Sua conta foi bloqueada com sucesso.") ;
+		        .body("Sua conta foi bloqueada com sucesso.\n") ;
 	}
 	
 	@ApiOperation(value = "Consulta o extrato de um usuário.")
-	@GetMapping("/conta/extrato/{id}")
+	@GetMapping("/{id}/extrato")
 	@ResponseBody
 	public ResponseEntity<List<Transacao>> buscaExtratoCliente(@PathVariable(value="id") long id){
 		
@@ -120,19 +123,21 @@ public class ContaController {
 	}
 	
 	@ApiOperation(value = "Consulta o extrato de um usuário por período. Datas devem ser no formato AAAA-MM-DD")
-	@GetMapping("/conta/extrato/{id}/{dataInicial}/dataFincial")
+	@GetMapping("/extrato/{id}/{dataInicial}/{dataFinal}")
 	@ResponseBody
 	public ResponseEntity<List<Transacao>> buscaExtratoPorPeriodo(@PathVariable(value="id") long id,
 																  @PathVariable(value="dataInicial") String dataInicial, 
-																  @PathVariable(value="dataFinal") String dataFinal){
+																  @PathVariable(value="dataFinal") String dataFinal) throws ParseException{
 		
 		Conta conta = contaService.buscarContaPorId(id);
 		
 		Conta.verificaExistenciaConta(conta);
 		
 		Transacao.checaDataValida(dataInicial, dataFinal);
+		LocalDate inicio1 = LocalDate.parse(dataInicial);
+		LocalDate fim1 = LocalDate.parse(dataFinal);
 		
-		List<Transacao> extratoConta = contaService.buscaExtradoPorPeriodo(id, dataInicial, dataFinal);
+		List<Transacao> extratoConta = contaService.buscaExtradoPorPeriodo(conta, inicio1, fim1);
 		
 		return new ResponseEntity<>(extratoConta, HttpStatus.OK);
 	}

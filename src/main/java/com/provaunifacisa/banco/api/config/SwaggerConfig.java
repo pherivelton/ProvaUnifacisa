@@ -36,7 +36,7 @@ public class SwaggerConfig {
                 "API de manipulação de usuário, suas contas e suas transações",
                 "1.0",
                 "Terms of Service",
-                new Contact("Pablo Herivelton", "www.google.com", "pherivelton@gmail.com"),
+                new Contact("Pablo Herivelton", "https://github.com/pherivelton/ProvaUnifacisa/", "pherivelton@gmail.com"),
                 "Apache License Version 2.0",
                 "https://www.apache.org/licesen.html", new ArrayList<VendorExtension>()
         );

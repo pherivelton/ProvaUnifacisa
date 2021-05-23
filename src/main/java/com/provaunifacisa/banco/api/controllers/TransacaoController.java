@@ -1,5 +1,6 @@
 package com.provaunifacisa.banco.api.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.provaunifacisa.banco.api.exceptions.AccountNotFoundException;
 import com.provaunifacisa.banco.api.exceptions.InvalidValueException;
 import com.provaunifacisa.banco.api.models.Conta;
 import com.provaunifacisa.banco.api.models.Transacao;
@@ -76,11 +76,10 @@ public class TransacaoController {
 	public ResponseEntity<String> sacaConta(@PathVariable(value="idConta") long idConta, @RequestBody Transacao transacao){
 		
 		Conta conta = contaService.buscarContaPorId(idConta);
-		transacao.setConta(conta);
+		Conta.verificaExistenciaConta(conta);
+		Conta.checaContaBloqueada(conta.getFlagAtivo());
 		
-		if (conta == null){
-			throw new AccountNotFoundException("Conta inexistente.");
-		}
+		transacao.setConta(conta);
 		
 		double valorASacar = transacao.getValor();
 		
@@ -98,20 +97,22 @@ public class TransacaoController {
 	}
 	
 	@ApiOperation(value = "Realiza uma operação de depósito na conta do usuário")
-	@PutMapping("/{idConta}/depositar/")
+	@PutMapping("/{idConta}/depositar")
 	@ResponseBody
 	public ResponseEntity<String> depositaConta(@PathVariable(value="idConta") long idConta, @RequestBody Transacao transacao){
 		
 		Conta conta = contaService.buscarContaPorId(idConta);
-		transacao.setConta(conta);
-		
 		Conta.verificaExistenciaConta(conta);
+		Conta.checaContaBloqueada(conta.getFlagAtivo());
+		
+		transacao.setConta(conta);
 		
 		double valorADepositar = transacao.getValor();
 		
 		Transacao.verificaValorValido(valorADepositar);
 		
 		conta.depositaConta(transacao.getValor());
+		transacao.setDataTransacao(LocalDate.now());
 		
 		transacaoService.criaTransacao(transacao);
 		contaService.atualizaConta(conta);
@@ -121,7 +122,7 @@ public class TransacaoController {
 	}
 	
 	@ApiOperation(value = "Realiza uma operação de transferência entre contas")
-	@PutMapping("/transferir/{idOrigem}/{idDestino}")
+	@PutMapping("/{idOrigem}/{idDestino}/transferir")
 	@ResponseBody
 	public ResponseEntity<String> transferenciaEntreContas(@RequestBody Transacao transacaoOrigem, @PathVariable(value="idOrigem") long idOrigem, @PathVariable(value="idDestino") long idDestino){
 		
@@ -131,6 +132,8 @@ public class TransacaoController {
 		
 		Conta.verificaExistenciaConta(contaOrigem);
 		Conta.verificaExistenciaConta(contaDestino);
+		Conta.checaContaBloqueada(contaOrigem.getFlagAtivo());
+		Conta.checaContaBloqueada(contaDestino.getFlagAtivo());
 		Transacao.verificaValorValido(valorDaTransacao);
 		
 		transacaoOrigem.setConta(contaOrigem);

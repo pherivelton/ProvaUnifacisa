@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.provaunifacisa.banco.api.exceptions.AccountNotFoundException;
+import com.provaunifacisa.banco.api.exceptions.BlockedAccountException;
 
 @Entity
 @Table(name="conta_corrente")
@@ -33,9 +34,22 @@ public class Conta implements Serializable{
 	@Column(nullable = false)
 	private double limitesaquediario;
 	
+	/**
+	 * Atributo que diz se uma conta é ativa ou não
+	 * 0 é conta bloqueada e 1 conta ativa.
+	 */
+	
 	@Column(nullable = false)
 	@Value("${flagAtivo:1}")
-	private int flagAtivo;
+	private int flagAtivo=1;
+	
+	/**
+	 * Atributo que diz qual tipo da conta do cliente
+	 * 1 é conta corrente.
+	 * 2 é conta poupança.
+	 * 3 é conta salário.
+	 * 4 é conta universitária.
+	 */
 	
 	@Column(nullable = false)
 	private int tipoConta;
@@ -111,10 +125,30 @@ public class Conta implements Serializable{
 		setSaldo(valorAposDeposito);
 	}
 	
+	/**
+	 * Método que checa se uma conta existe ou não
+	 * @return Excecao de Conta não existente
+	 */
+	
 	public static void verificaExistenciaConta(Conta conta) {
 		
 		if (conta == null){
 			throw new AccountNotFoundException("Conta inexistente.");
+		}
+	}
+	
+	/**
+	 * Método que checa se uma conta está bloqueada ou não
+	 * Caso esteja bloqueada, impede o usuário de realizar movimentações como saque, depósito e transferência
+	 * 
+	 * @return Excecao de conta bloqueada
+	 */
+	
+	public static void checaContaBloqueada(int flagAtivo) {
+		
+		if (flagAtivo == 0) {
+			
+			throw new BlockedAccountException("Conta bloqueada, não pode fazer movimentações.");
 		}
 	}
 

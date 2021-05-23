@@ -1,7 +1,10 @@
 package com.provaunifacisa.banco.api.models;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,14 +28,14 @@ public class Transacao implements Serializable{
 	private long idTransacao;
 	
 	@ManyToOne
-	@JoinColumn(name="conta_idConta")
+	@JoinColumn(name="id_Conta")
 	private Conta conta;
 
 	@Column(nullable = false)
 	private double valor;
 	
 	@Column(nullable = false)
-	private Date dataTransacao;
+	private LocalDate dataTransacao;
 	
 	public Conta getConta() {
 		return conta;
@@ -50,11 +53,11 @@ public class Transacao implements Serializable{
 		this.valor = valor;
 	}
 
-	public Date getDataTransacao() {
+	public LocalDate getDataTransacao() {
 		return dataTransacao;
 	}
 
-	public void setDataTransacao(Date dataTransacao) {
+	public void setDataTransacao(LocalDate dataTransacao) {
 		this.dataTransacao = dataTransacao;
 	}
 	
@@ -73,11 +76,16 @@ public class Transacao implements Serializable{
 		}
 	}
 	
-	public static void checaDataValida(String dataInicial, String dataFinal) {
+	public static void checaDataValida(String dataInicial, String dataFinal) throws ParseException {
 		
-		if (Date.valueOf(dataInicial) == null || Date.valueOf(dataFinal) == null) {
-			
-			throw new InvalidDateException("Data inválida, deve ser no formato AAAA-MM-DD");
+		DateFormat df = new SimpleDateFormat ("YYYY-MM-DD");
+		
+		try {
+			df.parse(dataInicial);
+			df.parse(dataFinal);
+		}catch (InvalidDateException e) {
+			System.out.println("Data inválida, deve ser no formato AAAA-MM-DD");
 		}
+		
 	}
 }

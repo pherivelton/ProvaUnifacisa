@@ -1,5 +1,6 @@
 package com.provaunifacisa.banco.api.services;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -41,11 +42,11 @@ public class ContaService {
 		contaRepository.delete(conta);
 	}
 	
-	public List<Transacao>buscaExtratoPorId(Conta c){
-		return transacaoRepository.findByidAccount(c);
+	public List<Transacao>buscaExtratoPorId(Conta conta){
+		return transacaoRepository.findByidAccount(conta);
 	}
 	
-	public List<Transacao>buscaExtradoPorPeriodo(long id, String dataInicial, String dataFinal){
-		return transacaoRepository.buscaTransacaoesPorPeriodo(id, dataInicial, dataFinal);
+	public List<Transacao>buscaExtradoPorPeriodo(Conta conta, LocalDate inicio1, LocalDate fim1){
+		return transacaoRepository.buscaTransacaoesPorPeriodo(conta, inicio1, fim1);
 	}
 }

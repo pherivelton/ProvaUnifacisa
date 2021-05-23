@@ -29,7 +29,7 @@ public class PessoaController {
 	@Autowired
 	private PessoaService pessoaService;
 	
-	@ApiOperation(value = "Cria um usuário no banco.")
+	@ApiOperation(value = "Cria um usuário no banco. (Formato da data YYYY-MM-DD)")
 	@PostMapping
 	@ResponseBody
 	public ResponseEntity<Pessoa>criaUsuario(@RequestBody Pessoa pessoa){
@@ -37,7 +37,7 @@ public class PessoaController {
 		return new ResponseEntity<Pessoa>(pessoaService.criaUsuario(pessoa), HttpStatus.CREATED);
 	}
 	
-	@ApiOperation(value = "Atualiza os dados de um usuário no banco.")
+	@ApiOperation(value = "Atualiza os dados de um usuário no banco. (Formato da data YYYY-MM-DD)")
 	@PutMapping
 	@ResponseBody
 	public ResponseEntity<Pessoa>atualizaUsuario(@RequestBody Pessoa pessoa){
@@ -53,9 +53,10 @@ public class PessoaController {
 	public ResponseEntity<String>deletaUsuario(@RequestBody Pessoa pessoa){
 		
 		Pessoa.verificaExistenciaUsuario(pessoa);
+		pessoaService.deletaUsuario(pessoa);
 		
 		return ResponseEntity.status(HttpStatus.OK)
-		        .body("Usuário deletada com sucesso.");
+		        .body("Usuário(a) deletado(a) com sucesso.");
 	}
 	
 	@ApiOperation(value = "Busca um usuário específico.")
@@ -70,7 +71,7 @@ public class PessoaController {
 	}
 	
 	@ApiOperation(value = "Lista todos os usuários do banco.")
-	@GetMapping("/usuarios")
+	@GetMapping("/lista")
 	@ResponseBody
 	public ResponseEntity<List<Pessoa>> listarUsuarios(){
 		
