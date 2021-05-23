@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.provaunifacisa.banco.api.exceptions.AccountNotFoundException;
 import com.provaunifacisa.banco.api.exceptions.InvalidDateException;
-import com.provaunifacisa.banco.api.exceptions.InvalidValueException;
 import com.provaunifacisa.banco.api.models.Conta;
 import com.provaunifacisa.banco.api.models.Transacao;
 import com.provaunifacisa.banco.api.services.ContaService;
-import com.provaunifacisa.banco.api.services.TransacaoService;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Api;
@@ -34,9 +32,6 @@ public class ContaController {
 	
 	@Autowired
 	private ContaService contaService;
-	
-	@Autowired
-	private TransacaoService transacaoService;
 	
 	@ApiOperation(value = "Lista todas as contas existente no banco.") // Rota OK
 	@GetMapping("/contas")

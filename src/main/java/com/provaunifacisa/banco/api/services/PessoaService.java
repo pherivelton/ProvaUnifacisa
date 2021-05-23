@@ -34,7 +34,7 @@ public class PessoaService {
 			return pessoaRepository.save(pessoa);
 		}
 		
-		public void deletaTransacao(Pessoa pessoa) {
+		public void deletaUsuario(Pessoa pessoa) {
 			
 			pessoaRepository.delete(pessoa);
 		}
