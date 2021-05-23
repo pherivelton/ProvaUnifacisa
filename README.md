@@ -15,13 +15,13 @@ Pessoa, Conta e Transacao, então realizar algumas operações sobre estas entid
 <p align="left">Arquitetura usada foi o MVC</p>
 
 ## Estrutura
-|.
-... | config
-... | controllers
-... | exceptions
-... | models
-... | repository
-... | services
+<p>|.
+<p>... | config
+<p>... | controllers
+<p>... | exceptions
+<p>... | models
+<p>... | repository
+<p>... | services
 
 Nos models temos as entidadas envolvidas na API, os services são as ligações entre os controllers e os repositórios, bem como as exceções definidas especificamente para 
 cada caso.
