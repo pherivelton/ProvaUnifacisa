@@ -12,6 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.provaunifacisa.banco.api.exceptions.InvalidDateException;
+import com.provaunifacisa.banco.api.exceptions.InvalidValueException;
+
 @Entity
 @Table(name="Transacao")
 public class Transacao implements Serializable{
@@ -61,5 +64,20 @@ public class Transacao implements Serializable{
 
 	public void setIdTransacao(long idTransacao) {
 		this.idTransacao = idTransacao;
+	}
+	
+	public static void verificaValorValido(double valor) {
+		
+		if (valor <= 0) {
+			throw new InvalidValueException("Valor inválido para realizar o depósito.");
+		}
+	}
+	
+	public static void checaDataValida(String dataInicial, String dataFinal) {
+		
+		if (Date.valueOf(dataInicial) == null || Date.valueOf(dataFinal) == null) {
+			
+			throw new InvalidDateException("Data inválida, deve ser no formato AAAA-MM-DD");
+		}
 	}
 }

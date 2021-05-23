@@ -1,6 +1,4 @@
 package com.provaunifacisa.banco.api.controllers;
-
-import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.provaunifacisa.banco.api.exceptions.AccountNotFoundException;
-import com.provaunifacisa.banco.api.exceptions.InvalidDateException;
 import com.provaunifacisa.banco.api.models.Conta;
 import com.provaunifacisa.banco.api.models.Transacao;
 import com.provaunifacisa.banco.api.services.ContaService;
@@ -33,28 +29,26 @@ public class ContaController {
 	@Autowired
 	private ContaService contaService;
 	
-	@ApiOperation(value = "Lista todas as contas existente no banco.") // Rota OK
+	@ApiOperation(value = "Lista todas as contas existente no banco.") 
 	@GetMapping("/contas")
 	@ResponseBody
 	public ResponseEntity<List<Conta>> listaContas(){
 		return new ResponseEntity<>(contaService.listarContas(), HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Cria uma conta no banco.") // Rota OK
+	@ApiOperation(value = "Cria uma conta no banco.")
 	@PostMapping
 	@ResponseBody
 	public ResponseEntity<Conta> criaConta(@RequestBody Conta conta) {
 		return new ResponseEntity<>(contaService.criaConta(conta), HttpStatus.CREATED);
 	}
 	
-	@ApiOperation(value = "Deleta uma conta no banco.") // Rota OK
+	@ApiOperation(value = "Deleta uma conta no banco.")
 	@DeleteMapping
 	@ResponseBody
 	public ResponseEntity<String> deletaConta(@RequestBody Conta conta) {
 		
-		if (conta == null){
-			throw new AccountNotFoundException("Conta inexistente.");
-		}
+		Conta.verificaExistenciaConta(conta);
 		
 		contaService.deletaConta(conta);
 		
@@ -63,42 +57,35 @@ public class ContaController {
 		
 	}
 	
-	@ApiOperation(value = "Atualiza os dados de uma conta no banco.") //Rota OK
+	@ApiOperation(value = "Atualiza os dados de uma conta no banco.") 
 	@PutMapping
 	@ResponseBody
 	public ResponseEntity<Conta> atualizaConta(@RequestBody Conta conta) {
 		
-		if (conta == null){
-			throw new AccountNotFoundException("Conta inexistente.");
-		}
-		
+		Conta.verificaExistenciaConta(conta);
 		contaService.atualizaConta(conta);
 		
 		return new ResponseEntity<>(conta, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Busca uma conta a partir do id do usuario.") //Rota OK
+	@ApiOperation(value = "Busca uma conta a partir do id do usuario.") 
 	@GetMapping("/{id}")
 	@ResponseBody
 	public ResponseEntity<Conta> listaContaPorId(@PathVariable(value="id") long id){
-		Conta conta = contaService.buscarContaPorId(id);
 		
-		if (conta == null){
-			throw new AccountNotFoundException("Conta inexistente.");
-		}
+		Conta conta = contaService.buscarContaPorId(id);
+		Conta.verificaExistenciaConta(conta);
+		
 		return new ResponseEntity<>(conta, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Retorna o saldo da conta do usuario.") // Rota OK
+	@ApiOperation(value = "Retorna o saldo da conta do usuario.") 
 	@GetMapping("/{id}/saldo")
 	@ResponseBody
 	public ResponseEntity<String> consultaSaldoConta(@PathVariable(value="id") long id){
 		
 		Conta conta = contaService.buscarContaPorId(id);
-		
-		if (conta == null){
-			throw new AccountNotFoundException("Conta inexistente.");
-		}
+		Conta.verificaExistenciaConta(conta);
 		
 		return ResponseEntity.status(HttpStatus.OK)
 		        .body("Seu saldo é: " + conta.getSaldo());
@@ -110,10 +97,7 @@ public class ContaController {
 	public ResponseEntity<String> bloqueaConta(@PathVariable(value="id") long id){
 		
 		Conta conta = contaService.buscarContaPorId(id);
-		
-		if (conta == null){
-			throw new AccountNotFoundException("Conta inexistente.");
-		}
+		Conta.verificaExistenciaConta(conta);
 		
 		conta.setFlagAtivo(0);
 		contaService.atualizaConta(conta);
@@ -122,18 +106,13 @@ public class ContaController {
 		        .body("Sua conta foi bloqueada com sucesso.") ;
 	}
 	
-
-	
 	@ApiOperation(value = "Consulta o extrato de um usuário.")
 	@GetMapping("/conta/extrato/{id}")
 	@ResponseBody
 	public ResponseEntity<List<Transacao>> buscaExtratoCliente(@PathVariable(value="id") long id){
 		
 		Conta conta = contaService.buscarContaPorId(id);
-		
-		if (conta == null){
-			throw new AccountNotFoundException("Conta inexistente.");
-		}
+		Conta.verificaExistenciaConta(conta);
 		
 		List<Transacao> extratoConta = contaService.buscaExtratoPorId(conta);
 		
@@ -149,19 +128,13 @@ public class ContaController {
 		
 		Conta conta = contaService.buscarContaPorId(id);
 		
-		if (conta == null){
-			throw new AccountNotFoundException("Conta inexistente.");
-		}
+		Conta.verificaExistenciaConta(conta);
 		
-		if (Date.valueOf(dataInicial) == null || Date.valueOf(dataFinal) == null) {
-			
-			throw new InvalidDateException("Data inválida, deve ser no formato AAAA-MM-DD");
-		}
+		Transacao.checaDataValida(dataInicial, dataFinal);
 		
 		List<Transacao> extratoConta = contaService.buscaExtradoPorPeriodo(id, dataInicial, dataFinal);
 		
 		return new ResponseEntity<>(extratoConta, HttpStatus.OK);
 	}
-	
-	
+		
 }

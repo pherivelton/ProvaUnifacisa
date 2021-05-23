@@ -105,15 +105,12 @@ public class TransacaoController {
 		Conta conta = contaService.buscarContaPorId(idConta);
 		transacao.setConta(conta);
 		
-		if (conta == null){
-			throw new AccountNotFoundException("Conta inexistente.");
-		}
+		Conta.verificaExistenciaConta(conta);
 		
 		double valorADepositar = transacao.getValor();
 		
-		if (valorADepositar <= 0) {
-			throw new InvalidValueException("Valor inválido para realizar o depósito.");
-		}
+		Transacao.verificaValorValido(valorADepositar);
+		
 		conta.depositaConta(transacao.getValor());
 		
 		transacaoService.criaTransacao(transacao);
@@ -130,18 +127,13 @@ public class TransacaoController {
 		
 		Conta contaOrigem = contaService.buscarContaPorId(idOrigem);
 		Conta contaDestino = contaService.buscarContaPorId(idDestino);
-		transacaoOrigem.setConta(contaOrigem);
-		
 		double valorDaTransacao = transacaoOrigem.getValor();
 		
-		if (contaOrigem == null || contaDestino == null){
-			throw new AccountNotFoundException("Conta de origem ou destino inexistente.");
-		}
+		Conta.verificaExistenciaConta(contaOrigem);
+		Conta.verificaExistenciaConta(contaDestino);
+		Transacao.verificaValorValido(valorDaTransacao);
 		
-		if (valorDaTransacao <= 0) {
-			throw new InvalidValueException("Valor inválido para realizar a transação.");
-		}
-		
+		transacaoOrigem.setConta(contaOrigem);
 		contaOrigem.sacaConta(valorDaTransacao);
 		transacaoService.criaTransacao(transacaoOrigem);
 		

@@ -12,6 +12,8 @@ import javax.persistence.Table;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import com.provaunifacisa.banco.api.exceptions.AccountNotFoundException;
+
 @Entity
 @Table(name="conta_corrente")
 public class Conta implements Serializable{
@@ -107,6 +109,13 @@ public class Conta implements Serializable{
 		
 		double valorAposDeposito = getSaldo() + valor;
 		setSaldo(valorAposDeposito);
+	}
+	
+	public static void verificaExistenciaConta(Conta conta) {
+		
+		if (conta == null){
+			throw new AccountNotFoundException("Conta inexistente.");
+		}
 	}
 
 }
