@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "Controlador de Usuários do banco")
-@RequestMapping(value = "v1/apiBanco/usuario")
+@RequestMapping(value = "/v1/apiBanco/usuario"	)
 public class PessoaController {
 
 	@Autowired
@@ -31,7 +32,7 @@ public class PessoaController {
 	@ApiOperation(value = "Cria um usuário no banco.")
 	@PostMapping
 	@ResponseBody
-	public ResponseEntity<Pessoa>criaPessoa(@RequestBody Pessoa pessoa){
+	public ResponseEntity<Pessoa>criaUsuario(@RequestBody Pessoa pessoa){
 		
 		return new ResponseEntity<Pessoa>(pessoaService.criaUsuario(pessoa), HttpStatus.CREATED);
 	}
@@ -39,7 +40,7 @@ public class PessoaController {
 	@ApiOperation(value = "Atualiza os dados de um usuário no banco.")
 	@PutMapping
 	@ResponseBody
-	public ResponseEntity<Pessoa>atualizaPessoa(@RequestBody Pessoa pessoa){
+	public ResponseEntity<Pessoa>atualizaUsuario(@RequestBody Pessoa pessoa){
 		
 		Pessoa.verificaExistenciaUsuario(pessoa);
 		
@@ -47,9 +48,9 @@ public class PessoaController {
 	}
 	
 	@ApiOperation(value = "Deleta um usuário do banco.")
-	@PostMapping
+	@DeleteMapping
 	@ResponseBody
-	public ResponseEntity<String>deletaPessoa(@RequestBody Pessoa pessoa){
+	public ResponseEntity<String>deletaUsuario(@RequestBody Pessoa pessoa){
 		
 		Pessoa.verificaExistenciaUsuario(pessoa);
 		

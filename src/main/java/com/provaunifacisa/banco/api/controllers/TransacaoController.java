@@ -27,7 +27,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "Controlador de Transações Bancárias")
-@RequestMapping(value = "v1/apiBanco/transacao")
+@RequestMapping(value = "/v1/apiBanco/transacao")
 public class TransacaoController {
 	
 	@Autowired

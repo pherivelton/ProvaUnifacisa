@@ -23,7 +23,7 @@ import io.swagger.annotations.Api;
 
 @RestController
 @Api(value = "Controlador de Contas Bancárias")
-@RequestMapping(value = "v1/apiBanco/conta")
+@RequestMapping(value ="/v1/apiBanco/conta")
 public class ContaController {
 	
 	@Autowired

@@ -2,9 +2,12 @@ package com.provaunifacisa.banco.api.services;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.provaunifacisa.banco.api.models.Pessoa;
 import com.provaunifacisa.banco.api.repository.PessoaRepository;
 
+@Service
 public class PessoaService {
 
 		private PessoaRepository pessoaRepository;
