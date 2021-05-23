@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.provaunifacisa.banco.api.exceptions.UserNotFoundException;
+
 @Entity
 @Table(name="pessoa")
 public class Pessoa {
@@ -59,6 +61,12 @@ public class Pessoa {
 		this.dataNascimento = dataNascimento;
 	}
 	
-	
+	public static void verificaExistenciaUsuario(Pessoa pessoa) {
+		
+		if (pessoa == null) {
+			
+			throw new UserNotFoundException("Usuário não encontrado.");
+		}
+	}
 	
 }

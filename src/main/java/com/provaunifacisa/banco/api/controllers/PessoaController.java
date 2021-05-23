@@ -41,6 +41,8 @@ public class PessoaController {
 	@ResponseBody
 	public ResponseEntity<Pessoa>atualizaPessoa(@RequestBody Pessoa pessoa){
 		
+		Pessoa.verificaExistenciaUsuario(pessoa);
+		
 		return new ResponseEntity<Pessoa>(pessoaService.atualizaUsuario(pessoa), HttpStatus.OK);
 	}
 	
@@ -49,25 +51,30 @@ public class PessoaController {
 	@ResponseBody
 	public ResponseEntity<String>deletaPessoa(@RequestBody Pessoa pessoa){
 		
+		Pessoa.verificaExistenciaUsuario(pessoa);
+		
 		return ResponseEntity.status(HttpStatus.OK)
 		        .body("Usuário deletada com sucesso.");
-	}
-	
-	@ApiOperation(value = "Lista todos os usuários do banco.")
-	@GetMapping("/usuarios")
-	@ResponseBody
-	public ResponseEntity<List<Pessoa>> listarUsuarios(){
-		return new ResponseEntity<>(pessoaService.listarUsuarios(), HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "Busca um usuário específico.")
 	@GetMapping("/{id}")
 	@ResponseBody
 	public ResponseEntity<Pessoa> buscaUsuarioPorId(@PathVariable(value="id") long id){
+		
 		Pessoa pessoa = pessoaService.buscaUsuarioPorId(id);
+		Pessoa.verificaExistenciaUsuario(pessoa);
+		
 		return new ResponseEntity<>(pessoa, HttpStatus.OK);
 	}
 	
+	@ApiOperation(value = "Lista todos os usuários do banco.")
+	@GetMapping("/usuarios")
+	@ResponseBody
+	public ResponseEntity<List<Pessoa>> listarUsuarios(){
+		
+		return new ResponseEntity<>(pessoaService.listarUsuarios(), HttpStatus.OK);
+	}
 	
 	
 }
